@@ -68,6 +68,9 @@ public class TipoBebidaService implements ITipoBebidaService {
 
     @Override
     public TipoBebidaResponse removerTipoBebida(Long tipoBebidaId) {
+        if (tipoBebidaId == 1 || tipoBebidaId == 2)
+            throw new EstoqueBebidaException(HttpStatus.PRECONDITION_FAILED, "Tipo Bebida não pode ser removido");
+
         TipoBebida tipoBebida = tipoBebidaRepository.findById(tipoBebidaId).orElse(null);
 
         if (Utils.isNull(tipoBebida))

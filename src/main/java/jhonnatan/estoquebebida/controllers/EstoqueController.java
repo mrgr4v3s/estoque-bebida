@@ -23,13 +23,13 @@ public class EstoqueController {
 
     @RequestMapping(value = "/tipo-bebida/{tipoBebidaId}/entrada", method = RequestMethod.GET)
     @ResponseBody
-    public SecaoDisponivelResponse consultarSecaoDisponivelEntrada(@PathVariable("tipoBebidaId") Long tipoBebidaId) {
+    public List<SecaoDisponivelResponse> consultarSecaoDisponivelEntrada(@PathVariable("tipoBebidaId") Long tipoBebidaId) {
         return estoqueService.consultarSecaoDisponivelEntrada(tipoBebidaId);
     }
 
     @RequestMapping(value = "/tipo-bebida/{tipoBebidaId}/venda", method = RequestMethod.GET)
     @ResponseBody
-    public SecaoDisponivelResponse consultarSecaoDisponivelVenda(@PathVariable("tipoBebidaId") Long tipoBebidaId) {
+    public List<SecaoDisponivelResponse> consultarSecaoDisponivelVenda(@PathVariable("tipoBebidaId") Long tipoBebidaId) {
         return estoqueService.consultarSecaoDisponivelVenda(tipoBebidaId);
     }
 }

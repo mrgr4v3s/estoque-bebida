@@ -51,9 +51,23 @@ public class EstoqueService implements IEstoqueService {
             throw new EstoqueBebidaException(HttpStatus.PRECONDITION_FAILED, "Tipo Bebida não encontrado");
 
         List<SecaoDisponivelResponse> secaoDisponivelResponses = new ArrayList<>();
-        List<Secao> secoes = estoqueRepository.findAllByTipoBebidaAndTipoBebidaIsNull(tipoBebida);
+        List<Secao> secoes = estoqueRepository.findSecaoLivre(tipoBebida);
+
+        if (secoes.isEmpty())
+            throw new EstoqueBebidaException(HttpStatus.NOT_FOUND, "Nenhuma Seção disponível para entrada");
 
         for (Secao secao : secoes) {
+            if (Utils.isNull(secao.getTipoBebida())) {
+                SecaoDisponivelResponse response = new SecaoDisponivelResponse();
+
+                response.setSecaoId(secao.getId());
+                response.setVolumeDisponivel(null);
+
+                secaoDisponivelResponses.add(response);
+
+                continue;
+            }
+
             if (secao.getQuantidadePreenchida() < secao.getTipoBebida().getVolume()) {
                 SecaoDisponivelResponse response = new SecaoDisponivelResponse();
 
@@ -76,6 +90,9 @@ public class EstoqueService implements IEstoqueService {
 
         List<SecaoDisponivelResponse> secaoDisponivelResponses = new ArrayList<>();
         List<Secao> secoes = estoqueRepository.findAllByTipoBebida(tipoBebida);
+
+        if (secoes.isEmpty())
+            throw new EstoqueBebidaException(HttpStatus.NOT_FOUND, "Nenhuma Seção disponível para venda");
 
         for (Secao secao : secoes) {
             if (secao.getQuantidadePreenchida() > secao.getTipoBebida().getVolume()) {
