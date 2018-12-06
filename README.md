@@ -24,14 +24,15 @@ Campo *"secaoId"* é obrigatório na consulta por seção
 
 ```{ "tipoBebidaId": 1, "secaoId": 1}```
 
-## Cadastros de seção
+## Cadastros de entrada/saída de bebida da Seção
+## Consulta de volume no estoque
 Todos os campos são obrigatórios para cadastro
 
 Para consulta somente os campos *"secaoId"* e *"tipoBebidaId"* são obrigatórios
 
 ```{ "secaoId": 1, "tipoBebidaId": 1, "volume": 10, "responsavelMovimento": "Jhonnatan Vieira"}```
 
-## CRUD Tipo Bebida
+## Cadastro/Alteração do Tipo Bebida
 Todos os campos são obrigatórios no cadastro
 
 Na alteração é necessário informar ao menos um campo
