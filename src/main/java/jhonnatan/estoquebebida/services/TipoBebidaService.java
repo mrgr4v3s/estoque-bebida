@@ -48,7 +48,7 @@ public class TipoBebidaService implements ITipoBebidaService {
             throw new EstoqueBebidaException(HttpStatus.PRECONDITION_FAILED, "Não é possível alterar Tipo Bebida do tipo \"Alcóolicas\" ou \"Não Alcoólicas\"");
 
         if (payload.getVolume() == 0L)
-            throw new EstoqueBebidaException(HttpStatus.PRECONDITION_FAILED, "Volume não pode ser igual a \"0\"");
+            throw new EstoqueBebidaException(HttpStatus.PRECONDITION_FAILED, "Volume não pode ser igual a 0");
 
         TipoBebida tipoBebida = tipoBebidaRepository.findById(tipoBebidaId).orElse(null);
 
@@ -79,8 +79,6 @@ public class TipoBebidaService implements ITipoBebidaService {
         tipoBebidaRepository.delete(tipoBebida);
 
         TipoBebidaResponse response = new TipoBebidaResponse();
-
-        response.setMensagem(MessageFormat.format("Tipo bebida {0} removido com sucesso", tipoBebidaId));
 
         return response;
     }

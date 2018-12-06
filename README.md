@@ -37,3 +37,7 @@ Todos os campos são obrigatórios no cadastro
 Na alteração é necessário informar ao menos um campo
 
 ```{"nome": "Remédio", "volume": 1000}```
+
+## Erro
+Em caso de erro nas validações terá como resposta a mensagem do erro juntamente com uma instrução
+

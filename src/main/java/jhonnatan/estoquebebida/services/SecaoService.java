@@ -27,6 +27,7 @@ public class SecaoService implements ISecaoService {
     @Autowired
     private ITipoBebidaRepository tipoBebidaRepository;
 
+    @Autowired
     private IHistoricoRepository historicoRepository;
 
     @Override
@@ -44,7 +45,7 @@ public class SecaoService implements ISecaoService {
             throw new EstoqueBebidaException(HttpStatus.PRECONDITION_FAILED,
                     MessageFormat.format("Tipo Bebida {0} inválido. Estoque aceita somente {1}",
                                             payload.getTipoBebidaId(),
-                                            tipoBebida.getId()));
+                                            secao.getTipoBebida().getId()));
 
         if (somarVolumes(payload.getVolume(), secao.getQuantidadePreenchida()) > tipoBebida.getVolume())
             throw new EstoqueBebidaException(HttpStatus.PRECONDITION_FAILED,
@@ -78,12 +79,15 @@ public class SecaoService implements ISecaoService {
     @Override
     public SecaoResponse consultarBebidaSecao(SecaoPayload payload) {
         if (Utils.isNull(payload.getSecaoId()))
-            throw new EstoqueBebidaException(HttpStatus.PRECONDITION_FAILED, "Campo \"secaoId\" está nulo");
+            throw new EstoqueBebidaException(HttpStatus.PRECONDITION_FAILED, "Campo secaoId está nulo");
 
         Secao secao = secaoRepository.findById(payload.getSecaoId()).orElse(null);
 
         if (Utils.isNull(secao))
             throw new EstoqueBebidaException(HttpStatus.PRECONDITION_FAILED, "Seção não encontrada");
+
+        if (Utils.isNull(secao.getTipoBebida()))
+            throw new EstoqueBebidaException(HttpStatus.NOT_FOUND, "Não existe tipo bebida cadastrado nessa seção");
 
         SecaoResponse secaoResponse = new SecaoResponse();
 
@@ -99,6 +103,9 @@ public class SecaoService implements ISecaoService {
     public SecaoResponse venderBebidaSecao(SecaoPayload payload) {
         Secao secao = secaoRepository.findById(payload.getSecaoId()).orElse(null);
 
+        if (secao.getQuantidadePreenchida() == 0)
+            throw new EstoqueBebidaException(HttpStatus.PRECONDITION_FAILED, "Não foi possível concluir a venda. Volume atual do estoque é 0");
+
         if (Utils.isNull(secao))
             throw new EstoqueBebidaException(HttpStatus.NOT_FOUND, "Seção não encontrada");
 
@@ -112,13 +119,13 @@ public class SecaoService implements ISecaoService {
                             payload.getTipoBebidaId(),
                             tipoBebida.getId()));
 
-        if (somarVolumes(payload.getVolume(), secao.getQuantidadePreenchida()) > tipoBebida.getVolume())
+        if (subtrairVolumes(payload.getVolume(), secao.getQuantidadePreenchida()) < 0)
             throw new EstoqueBebidaException(HttpStatus.PRECONDITION_FAILED,
-                    MessageFormat.format("Limite de volume do estoque atingido. Volume máximo é de {0}, volume atual do estoque é de {1}",
-                            tipoBebida.getVolume(),
+                    MessageFormat.format("Quantidade a venda é maior que a atual do estoque. Quantidade informada para venda {0}, volume atual do estoque é de {1}",
+                            payload.getVolume(),
                             secao.getQuantidadePreenchida()));
 
-        secao.setQuantidadePreenchida(subtrairVolumes(secao.getQuantidadePreenchida(), payload.getVolume()));
+        secao.setQuantidadePreenchida(subtrairVolumes(payload.getVolume(), secao.getQuantidadePreenchida()));
         secao.setTipoBebida(tipoBebida);
 
         secaoRepository.save(secao);
@@ -134,13 +141,13 @@ public class SecaoService implements ISecaoService {
 
     // Caso a soma seja menor ou igual a 0, é retornado o valor "0"
     private Long subtrairVolumes(Long volumeVendido, Long volumeAtual) {
-        return volumeAtual - volumeVendido > 0 ? volumeAtual - volumeVendido : 0L;
+        return volumeAtual - volumeVendido;
     }
 
     private SecaoResponse montarResponseEntrada(SecaoPayload payload, TipoBebida tipoBebida, Secao secao) {
         SecaoResponse response = new SecaoResponse();
 
-        response.setMensagem(MessageFormat.format("{0}L de bebida do tipo {1} foram inseridas na secao {2}",
+        response.setMensagem(MessageFormat.format("{0}mL de bebida do tipo {1} foram inseridas na secao {2}",
                 payload.getVolume(),
                 tipoBebida.getNome(),
                 secao.getNome()));
@@ -151,7 +158,7 @@ public class SecaoService implements ISecaoService {
     private SecaoResponse montarResponseSaida(SecaoPayload payload, TipoBebida tipoBebida, Secao secao) {
         SecaoResponse response = new SecaoResponse();
 
-        response.setMensagem(MessageFormat.format("{0}L de bebida do tipo {1} foram vendidas na secao {2}",
+        response.setMensagem(MessageFormat.format("{0}mL de bebida do tipo {1} foram vendidas na secao {2}",
                 payload.getVolume(),
                 tipoBebida.getNome(),
                 secao.getNome()));

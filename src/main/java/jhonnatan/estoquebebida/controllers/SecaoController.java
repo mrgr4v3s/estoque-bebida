@@ -4,6 +4,8 @@ import jhonnatan.estoquebebida.entities.payloads.SecaoPayload;
 import jhonnatan.estoquebebida.entities.responses.SecaoResponse;
 import jhonnatan.estoquebebida.interfaces.ISecaoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,21 +15,27 @@ public class SecaoController {
     private ISecaoService secaoService;
 
     @RequestMapping(value = "/bebida/entrada", method = RequestMethod.POST)
-    @ResponseBody
-    public SecaoResponse incluirBebidaSecao(@RequestBody SecaoPayload payload) {
+    public ResponseEntity<SecaoResponse> incluirBebidaSecao(@RequestBody SecaoPayload payload) {
         payload.isValid();
-        return secaoService.inserirBebidaSecao(payload);
+
+        SecaoResponse response = secaoService.inserirBebidaSecao(payload);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/bebida/venda")
-    @ResponseBody
-    public SecaoResponse venderBebidaSecao (@RequestBody SecaoPayload payload) {
+    public ResponseEntity<SecaoResponse> venderBebidaSecao(@RequestBody SecaoPayload payload) {
         payload.isValid();
-        return null;
+
+        SecaoResponse response = secaoService.venderBebidaSecao(payload);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/bebida", method = RequestMethod.POST)
-    public SecaoResponse consultarBebidaSecao(@RequestBody SecaoPayload payload) {
-        return secaoService.consultarBebidaSecao(payload);
+    public ResponseEntity<SecaoResponse> consultarBebidaSecao(@RequestBody SecaoPayload payload) {
+        SecaoResponse response = secaoService.consultarBebidaSecao(payload);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

@@ -4,7 +4,6 @@ public class TipoBebidaResponse {
     private Long id;
     private String nome;
     private Long volume;
-    private String mensagem;
 
     public Long getId() {
         return id;
@@ -28,13 +27,5 @@ public class TipoBebidaResponse {
 
     public void setVolume(Long volume) {
         this.volume = volume;
-    }
-
-    public String getMensagem() {
-        return mensagem;
-    }
-
-    public void setMensagem(String mensagem) {
-        this.mensagem = mensagem;
     }
 }
