@@ -3,12 +3,14 @@ pipeline {
   stages {
     stage('Execute Sonar Scan') {
       steps {
-        withSonarQubeEnv(installationName: 'sonar', credentialsId: 'estoque-sonar')
+        withSonarQubeEnv(installationName: 'LocalSonar')
       }
     }
-    stage('') {
-      steps {
-        waitForQualityGate(credentialsId: 'estoque-sonar', abortPipeline: true)
+    stage('Quality Gate') {
+       timeout(time: 1, unit: 'HOURS') { 
+      def qg = waitForQualityGate()
+      if (qg.status != 'OK') {
+        error "Pipeline aborted due to quality gate failure: ${qg.status}"
       }
     }
   }
