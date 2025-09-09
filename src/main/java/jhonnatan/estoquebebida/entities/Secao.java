@@ -1,6 +1,6 @@
 package jhonnatan.estoquebebida.entities;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "SECAO")

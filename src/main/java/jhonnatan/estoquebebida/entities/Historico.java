@@ -2,7 +2,7 @@ package jhonnatan.estoquebebida.entities;
 
 import jhonnatan.estoquebebida.entities.enums.MovimentoEnum;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
